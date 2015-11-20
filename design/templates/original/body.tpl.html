@@ -9,24 +9,27 @@
     message_player_win: {
     }
   });
-  l.message_player[PLAYER_LOCAL] = '{LA_message_player_local}';
-  l.message_player[PLAYER_COMPUTER] = '{LA_message_player_computer}';
-  l.message_player_win[PLAYER_UNDEFINED] = '{LA_message_player_draw}';
-  l.message_player_win[PLAYER_LOCAL] = '{LA_message_player_win_local}';
-  l.message_player_win[PLAYER_COMPUTER] = '{LA_message_player_win_computer}';
+  l.message_player[TicTacToe.PLAYER_LOCAL] = '{LA_message_player_local}';
+  l.message_player[TicTacToe.PLAYER_COMPUTER] = '{LA_message_player_computer}';
+  l.message_player_win[TicTacToe.PLAYER_UNDEFINED] = '{LA_message_player_draw}';
+  l.message_player_win[TicTacToe.PLAYER_LOCAL] = '{LA_message_player_win_local}';
+  l.message_player_win[TicTacToe.PLAYER_COMPUTER] = '{LA_message_player_win_computer}';
 
-  if(round instanceof Object && !round.fieldsEmpty) {
-    round.fields = 0;
-    <!-- BEGIN row -->
-    round.gameField[{row.Y}] = [];
-      <!-- BEGIN column -->
-        round.gameField[{row.Y}][{column.X}] = MARK_NONE;
-        round.fields++;
-      <!-- END column -->
-    <!-- END row -->
-    round.gameFieldEmpty = $.extend(true, [], round.gameField);
-    round.fieldsEmpty = round.fields;
-  }
+  var fieldWidth = 3;
+  var fieldHeight = 3;
+
+//  if(round instanceof Object && !round.fieldsEmpty) {
+//    round.fields = 0;
+//    <!-- BEGIN row -->
+//    round.gameField[{row.Y}] = [];
+//      <!-- BEGIN column -->
+//        round.gameField[{row.Y}][{column.X}] = MARK_NONE;
+//        round.fields++;
+//      <!-- END column -->
+//    <!-- END row -->
+//    round.gameFieldEmpty = $.extend(true, [], round.gameField);
+//    round.fieldsEmpty = round.fields;
+//  }
 </script>
 
 <div id="game_message">{L_message_player_local}</div>
