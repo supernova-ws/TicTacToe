@@ -1,0 +1,9 @@
+# Ignore all dotfiles...
+.*
+# ...except for .gitignore & .gitattributes
+!.gitignore
+!.gitattributes
+!.htaccess
+
+# Ignoring all files started with "__" - it's a local or global test files
+__*

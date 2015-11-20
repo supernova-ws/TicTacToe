@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{LANG_DIRECTION}" lang="{LANG_LANGUAGE}" xml:lang="{LANG_LANGUAGE}">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, target-densitydpi=device-dpi" />
+  <meta name="HandheldFriendly" content="True">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+
+  <link rel="shortcut icon" href="{D_SN_ROOT_VIRTUAL}favicon.ico?{C_var_db_update}" />
+
+  <link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}design/normalize.css?{C_var_db_update}" />
+  <!--<link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}design/css/jquery-ui.css?{C_var_db_update}" />-->
+
+  <link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}design/tictactoe.css?{C_var_db_update}" />
+  <!--&lt;!&ndash; IF LOGIN_LOGOUT &ndash;&gt;-->
+  <!--<link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}design/css/login.css?{C_var_db_update}" />-->
+  <!--&lt;!&ndash; ENDIF &ndash;&gt;-->
+  <!--[if IE]>
+  <link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}design/global-ie.css?{C_var_db_update}" />
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}{TEMPLATE_PATH}/_template.css?{C_var_db_update}" />
+  <!--<link rel="stylesheet" type="text/css" href="{D_SN_ROOT_VIRTUAL}{dpath}skin.css?{C_var_db_update}" />-->
+
+  <title>{title}</title>
+</head>
+
+<!--&lt;!&ndash; IF PLAYER_OPTION_DESIGN_DISABLE_BORDERS &ndash;&gt;-->
+<!--&lt;!&ndash; DEFINE $PLAYER_OPTION_DESIGN_DISABLE_BORDERS = 'no_border_image' &ndash;&gt;-->
+<!--й-->
+<!--&lt;!&ndash; ENDIF &ndash;&gt;-->
+
+<body class="{$PLAYER_OPTION_DESIGN_DISABLE_BORDERS}">
+
+<script type="text/javascript">
+  // Этот скрипт находится здесь, потому что он должен быть выполнен максимально быстро
+  var timeBrowser = new Date();
+</script>
+
+<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/jquery.js?{C_var_db_update}"></script>
+<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/ion.sound.min.js?{C_var_db_update}"></script>
+
+<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/tictactoe.js?{C_var_db_update}"></script>
+<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/sound.js?{C_var_db_update}"></script>
+
+<script type="text/javascript">
+  var ROOT_VIRTUAL = '{D_SN_ROOT_VIRTUAL}';
+  var SOUND_ENABLED = parseInt('{SOUND_ENABLED}') ? parseInt('{SOUND_ENABLED}') : 0;
+  var PLAYER_OPTION_ANIMATION_DISABLED = parseInt('{PLAYER_OPTION_ANIMATION_DISABLED}') ? parseInt('{PLAYER_OPTION_ANIMATION_DISABLED}') : 0;
+
+  jQuery.fx.off = PLAYER_OPTION_ANIMATION_DISABLED;
+
+  // Корректировка по времени запроса - если доступно
+  // var timeBrowser = window.performance ? timeBrowser = new Date(window.performance.timing.requestStart) : new Date();
+  // var timeBrowser = window.performance ? timeBrowser = new Date(window.performance.timing.responseStart) : new Date();
+
+  // С сервера ВСЕГДА должна передаваться РАЗНИЦА во времени - что бы корректно работали скрипты при навигации вперед-назад по страницам в браузерах!
+  //      var timeDiff = parseInt('{D_SN_CLIENT_TIME_DIFF}') ? parseInt('{D_SN_CLIENT_TIME_DIFF}') : false;
+  //
+  //      var SN_TIME_NOW = parseInt('{D_SN_TIME_NOW}') ? parseInt('{D_SN_TIME_NOW}') : (round(timeBrowser.valueOf() / 1000));
+  //
+  //      var timeTimerStart = timeBrowser;
+  //
+  //      if(parseInt('{TIME_DIFF_MEASURE}') || timeDiff === false) {
+  //        timeDiff = 0;
+  //        jQuery.post("time_probe.php", {'timeBrowser': timeBrowser.valueOf(), 'utc_offset': -timeBrowser.getTimezoneOffset() * 60, 'client_gmt': timeBrowser.toUTCString()}, function(data) {
+  //          timeDiff = parseInt(data);
+  //        });
+  //      }
+  //
+  //      var FONT_SIZE_PERCENT_MIN = parseFloat('{D_FONT_SIZE_PERCENT_MIN}');
+  //      var FONT_SIZE_PERCENT_DEFAULT = parseFloat('{D_FONT_SIZE_PERCENT_DEFAULT}');
+  //      var FONT_SIZE_PERCENT_MAX = parseFloat('{D_FONT_SIZE_PERCENT_MAX}');
+  //      var FONT_SIZE_PERCENT_STEP = parseFloat('{D_FONT_SIZE_PERCENT_STEP}');
+  //      var FONT_SIZE = parseFloat('{FONT_SIZE}');
+</script>
+
+<!--&lt;!&ndash; IF FONT_SIZE && FONT_SIZE != FONT_SIZE_PERCENT_DEFAULT_STRING &ndash;&gt;-->
+<!--<style type="text/css">-->
+<!--html {-->
+<!--font-size: {FONT_SIZE} !important;-->
+<!--}-->
+<!--</style>-->
+<!--&lt;!&ndash; ENDIF &ndash;&gt;-->
+
+<!--<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/lib/jquery-ui.js?{C_var_db_update}"></script>-->
+
+<!--<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/lib/ion.sound.min.js?{C_var_db_update}"></script>-->
+<!--<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/sn_sound.js?{C_var_db_update}"></script>-->
+
+<!--<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/sn_global.js?{C_var_db_update}"></script>-->
+<!--<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}js/sn_timer.js?{C_var_db_update}"></script>-->
+
+<!-- BEGIN javascript -->
+<!-- IF javascript.CONTENT -->
+<script type="text/javascript">{javascript.CONTENT}</script>
+<!-- ELSE -->
+<script type="text/javascript" src="{D_SN_ROOT_VIRTUAL}{javascript.FILE}?{C_var_db_update}"></script>
+<!-- ENDIF -->
+<!-- END javascript -->
+
+
+<!--&lt;!&ndash; IF IMPERSONATING &ndash;&gt;-->
+<!--<div style="text-align: center" class="warning">{IMPERSONATING}</div>-->
+<!--&lt;!&ndash; ENDIF &ndash;&gt;-->
+
+<h1>{L_TicTacToe}</h1>
+<hr />

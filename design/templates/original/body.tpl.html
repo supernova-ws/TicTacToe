@@ -1,0 +1,65 @@
+<script type="text/javascript">
+  $.extend(l, {
+    error_wrong_turn: '{LA_error_wrong_turn}',
+    message_player: {
+// ECMA6 - WHERE ARE YOU?!
+//      [PLAYER_LOCAL]: '{LA_message_player_local}',
+//      [PLAYER_COMPUTER]: '{LA_message_player_computer}'
+    },
+    message_player_win: {
+    }
+  });
+  l.message_player[PLAYER_LOCAL] = '{LA_message_player_local}';
+  l.message_player[PLAYER_COMPUTER] = '{LA_message_player_computer}';
+  l.message_player_win[PLAYER_UNDEFINED] = '{LA_message_player_draw}';
+  l.message_player_win[PLAYER_LOCAL] = '{LA_message_player_win_local}';
+  l.message_player_win[PLAYER_COMPUTER] = '{LA_message_player_win_computer}';
+
+  if(round instanceof Object && !round.fieldsEmpty) {
+    round.fields = 0;
+    <!-- BEGIN row -->
+    round.gameField[{row.Y}] = [];
+      <!-- BEGIN column -->
+        round.gameField[{row.Y}][{column.X}] = MARK_NONE;
+        round.fields++;
+      <!-- END column -->
+    <!-- END row -->
+    round.gameFieldEmpty = $.extend(true, [], round.gameField);
+    round.fieldsEmpty = round.fields;
+  }
+</script>
+
+<div id="game_message">{L_message_player_local}</div>
+
+<div style="display: inline-block">
+  <div id="game_field">
+    <!-- BEGIN row -->
+    <!--<div class="row">-->
+      <!-- BEGIN column -->
+      <!-- IF column.X == row.Y -->
+        <!-- DEFINE $DIAGONAL_MAIN = 'diagonal_main' -->
+      <!-- ELSE -->
+        <!-- DEFINE $DIAGONAL_MAIN = '' -->
+      <!-- ENDIF -->
+      <!-- IF column.X + row.Y == 2 -->
+        <!-- DEFINE $DIAGONAL_SECONDARY = 'diagonal_secondary' -->
+      <!-- ELSE -->
+        <!-- DEFINE $DIAGONAL_SECONDARY = '' -->
+      <!-- ENDIF -->
+      <div class="cell {$DIAGONAL_MAIN} {$DIAGONAL_SECONDARY}" x="{column.X}" y="{row.Y}">
+        {row.Y} {column.X}
+      </div>
+      <!-- END column -->
+    <!--</div>-->
+    <!-- END row -->
+  </div>
+</div>
+
+<label for="mark_o">{L_input_wanna_be_zero}</label> <input type="checkbox" id="mark_o" value="1" />
+<input type="button" id="game_reset" value="{L_game_reset}" />
+
+<div>
+  Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a>
+  from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>
+  is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>
+</div>
