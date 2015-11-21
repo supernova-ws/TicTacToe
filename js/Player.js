@@ -23,9 +23,10 @@ function Player(mark, otherPlayer) {
       var x = parseInt(cell.attr('x'));
       var y = parseInt(cell.attr('y'));
 
-      if(game.gameField[y] && game.gameField[y][x] == TicTacToe.MARK_NONE) {
+      if(game.board.checkCell(y, x) == TicTacToe.MARK_NONE) {
+      //if(game.gameField[y] && game.gameField[y][x] == TicTacToe.MARK_NONE) {
         sn_sound_play('other_moved');
-        window.round.makeMove({x: x, y: y, mark: game.playerCurrent.mark});
+        game.makeMove({x: x, y: y, mark: game.playerCurrent.mark});
       } else {
         // todo Сообщение об ошибке
         sn_sound_play('fail');
@@ -39,7 +40,8 @@ function Player(mark, otherPlayer) {
 
     this.makeMove = function() {
       //var game = window.round;
-      var gameField = window.round.gameField;
+      // TODO - DI
+      var gameField = window.round.board.gameField;
       var emptyCells = [];
 
       for(var y in gameField) {
