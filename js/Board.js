@@ -1,19 +1,27 @@
+// TODO Как документировать аргументы в классе?
 /**
+ * Работа с доской
  *
- * @param fieldHeight
- * @param fieldWidth
- * @param round
  * @constructor
+ * @param param
  */
-var Board = function (fieldHeight, fieldWidth, round) {
-//function Board(fieldHeight, fieldWidth, round) {
-  !fieldWidth ? fieldWidth = 3 : false;
-  !fieldHeight ? fieldHeight = 3 : false;
+//var Board = function (param) {
+function Board(param) {
+  !(param instanceof Object) ? param = {} : false;
 
-  this.fieldWidth = fieldWidth;
-  this.fieldHeight = fieldHeight;
+  if(param.revive && typeof(param.revive) == "object" && param.revive.snClass == 'Board') {
+    this.snRevive(param.revive);
+    return;
+  }
 
-  this.fieldsEmpty = this.fields = this.fieldWidth * this.fieldHeight;
+  // this.snClass = 'Board';
+  this.snClass = this.constructor.name;
+
+  this.fieldWidth = parseInt(param.width) ? parseInt(param.width) : 3;
+  this.fieldHeight = parseInt(param.height) ? parseInt(param.height) : 3;
+  this.winStreak = parseInt(param.winStreak) ? parseInt(param.winStreak) : 3;
+
+  this.fields = this.fieldWidth * this.fieldHeight;
 
   this.gameField = [];
   if(this.fieldWidth && this.fieldHeight) {
@@ -24,8 +32,8 @@ var Board = function (fieldHeight, fieldWidth, round) {
       }
     }
   }
-  this.gameFieldEmpty = $.extend(true, [], this.gameField);
-
+  //this.gameFieldEmpty = $.extend(true, [], this.gameField);
+  //this.fieldsEmpty = this.fields = this.fieldWidth * this.fieldHeight;
 };
 
 Board.prototype.makeMove = function (move){
@@ -69,7 +77,7 @@ Board.prototype.makeMove = function (move){
           winSelector.push('.diagonal_secondary');
           break;
       }
-      $(winSelector.join(' ')).addClass('mark_win');
+      $(winSelector.join('&nbsp;')).addClass('mark_win');
 
       return 'currentPlayerWin';
     }
@@ -85,9 +93,10 @@ Board.prototype.makeMove = function (move){
 Board.prototype.resetField = function() {
   $('.cell').removeClass('mark_x mark_o mark_win');
 
-  this.gameField = $.extend(true, [], this.gameFieldEmpty);
-  this.fields = this.fieldsEmpty;
-  // round.fields = round.fieldsEmpty;
+  //this.gameField = $.extend(true, [], this.gameFieldEmpty);
+  //this.fields = this.fieldsEmpty;
+  this.fields = this.fieldWidth * this.fieldHeight;
+  this.gameField = this.gameField.zeroRecursive();
 };
 
 Board.prototype.checkCell = function(y, x) {
@@ -95,35 +104,40 @@ Board.prototype.checkCell = function(y, x) {
 };
 
 Board.prototype.renderBoard = function() {
+  var htmlCell;
+  var htmlBoard = $('#game_field').html('');
+  //htmlBoard.html('');
+  //var atemp = $('<div class="cell">&nbsp;</div>');
+  //console.log(atemp.width());
+
+
   var gameField = this.gameField;
   for(var y in gameField) {
     if(gameField.hasOwnProperty(y)) {
       for(var x in gameField[y]) {
-        if(gameField[y].hasOwnProperty(x) && gameField[y][x] != TicTacToe.MARK_NONE) {
-          $('[x=' + x + '][y=' + y + ']').addClass(gameField[y][x] == TicTacToe.MARK_X ? 'mark_x' : 'mark_o').attr('mark', gameField[y][x]);
+        if(gameField[y].hasOwnProperty(x)) {
+          x = parseInt(x);
+          y = parseInt(y);
+
+          htmlCell = $('<div class="cell">Y:{0} X:{1}</div>'.format(y, x)).attr('x', x).attr('y', y);
+          x == y ? htmlCell.addClass('diagonal_main') : false;
+          (x + y) == (this.fieldWidth - 1) ? htmlCell.addClass('diagonal_secondary') : false;
+          htmlBoard.append(htmlCell);
+
+          if(gameField[y][x] != TicTacToe.MARK_NONE) {
+            $('[x=' + x + '][y=' + y + ']').addClass(gameField[y][x] == TicTacToe.MARK_X ? 'mark_x' : 'mark_o').attr('mark', gameField[y][x]);
+          }
         }
       }
     }
   }
+
+  //console.log(htmlCell.width() * this.fieldWidth);
+
+  htmlBoard.width(htmlCell.outerWidth(true) * this.fieldWidth);
+  htmlBoard.height(htmlCell.outerHeight(true) * this.fieldHeight);
 };
 
-Board.prototype.snRetrieve = function (jsonObject) {
+Board.prototype.snRevive = function (jsonObject) {
   jsonObject instanceof Object ? $.extend(this, jsonObject) : false;
 };
-
-//Board.prototype.toString = function() {
-//  return JSON.stringify(this, function(key, value) {
-//    if (key == 'round') {
-//      return undefined; // удаляем все строковые свойства
-//    }
-//    //if (key == 'board') {
-//    //  return undefined; // удаляем все строковые свойства
-//    //}
-//    //if(key == 'playerCurrent') {
-//    //  //console.log(value);
-//    //  return value.mark;
-//    //}
-//    //return value.toString();
-//  });
-//};
-

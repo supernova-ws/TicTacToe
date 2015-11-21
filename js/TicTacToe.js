@@ -4,32 +4,27 @@
  * @constructor
  */
 
-//function TicTacToe(newPlayerX) {
-var TicTacToe = function (newPlayerX) {
+// localStorage.TicTacToe = '';
+
+function TicTacToe(newPlayerX) {
+//var TicTacToe = function (newPlayerX) {
   // TODO - разобраться со статическими методами в JS - и, если нужно, позаменять везде TicTacToe.XXX на this.XXX
 
-  //!fieldWidth ? fieldWidth = 3 : false;
-  //!fieldHeight ? fieldHeight = 3 : false;
+  //console.log(this.constructor.name);
 
-  //this.fieldsEmpty = this.fields = fieldWidth * fieldHeight;
-  //this.gameField = [];
-  //if(fieldWidth && fieldHeight) {
-  //  for(var i = 0; i < fieldHeight; i++) {
-  //    this.gameField[i] = [];
-  //    for(var j = 0; j < fieldWidth; j++) {
-  //      this.gameField[i][j] = TicTacToe.MARK_NONE;
-  //    }
-  //  }
-  //}
-  //this.gameFieldEmpty = $.extend(true, [], this.gameField);
+  this.snClass = this.constructor.name;
+
+  //console.log(Function.prototype.name);
+  //console.log(Function.prototype.name === undefined);
 
   this.localStoragePresent = typeof(localStorage) !== "undefined";
-  this.board = new Board(fieldHeight, fieldWidth, this);
 
   // TODO - включить обратно
-  if(this.localStoragePresent && localStorage.tictactoe) {
-    this.snRetrieve();
+  if(this.localStoragePresent && localStorage.TicTacToe) {
+    this.snRevive();
   } else {
+    this.board = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
+
     this.playerX = new Player(newPlayerX);
     this.playerO = new Player(newPlayerX == TicTacToe.MARK_X ? TicTacToe.MARK_O : TicTacToe.MARK_X, this.playerX);
 
@@ -40,14 +35,8 @@ var TicTacToe = function (newPlayerX) {
 
   this.localPlayer = this.playerX.type == TicTacToe.PLAYER_LOCAL ? this.playerX : this.playerO;
 
-  /**
-   * Функция актуализирует состояние фронт-енда в соответствии с данными из стораджа
-   */
-  this.renderStorage = function() {
-    this.board.renderBoard();
+  this.board.renderBoard();
 
-    $('#mark_o').attr('checked', this.playerIsZero ? true : false);
-  };
 
   this.makeMove = function(move) {
     var result = this.board.makeMove(move);
@@ -144,7 +133,7 @@ var TicTacToe = function (newPlayerX) {
     //    $('#game_message').text(l.message_player[this.playerCurrent.type]);
     //
     //    if(this.localStoragePresent) {
-    //      localStorage.tictactoe = this.toString();
+    //      localStorage.TicTacToe = this.toString();
     //    }
     //
     //    this.playerCurrent.waitForMove();
@@ -154,29 +143,6 @@ var TicTacToe = function (newPlayerX) {
     //  alert('Поворот не туда!');
     //}
   };
-
-  this.snStore = function() {
-    if(!this.localStoragePresent) {
-      return;
-    }
-
-    localStorage.tictactoe = JSON.stringify(this);
-  };
-
-  //this.snRetrieve = function () {
-  //  //console.log(localStorage.tictactoe);
-  //
-  //  var jsonParsed = JSON.parse(localStorage.tictactoe);
-  //
-  //  $.extend(this, jsonParsed);
-  //
-  //  this.board.snRetrieve(jsonParsed.board);
-  //
-  //  this.playerX = new Player(TicTacToe.MARK_X, jsonParsed.playerO);
-  //  this.playerO = new Player(TicTacToe.MARK_O, jsonParsed.playerX);
-  //
-  //  this.playerCurrent = jsonParsed.playerCurrent.mark == TicTacToe.MARK_X ? this.playerX : this.playerO;
-  //};
 
   /**
    * Функция обнуляет игру
@@ -189,30 +155,10 @@ var TicTacToe = function (newPlayerX) {
     $('#game_message').text(l.message_player[this.playerCurrent.type]);
 
     if(this.localStoragePresent) {
-      localStorage.tictactoe = '';
+      localStorage.TicTacToe = '';
     }
 
     this.playerCurrent.waitForMove();
-  };
-
-  /**
-   *
-   * @param checkbox
-   */
-  this.changeSide = function(checkbox) {
-    this.playerIsZero = $(checkbox).is(':checked') ? 1 : 0;
-
-    if(this.playerIsZero && this.playerO.type != TicTacToe.PLAYER_LOCAL) {
-      this.playerO = new Player(TicTacToe.MARK_O);
-      this.playerX = new Player(TicTacToe.MARK_X, this.playerO);
-    } else {
-      this.playerX = new Player(TicTacToe.MARK_X);
-      this.playerO = new Player(TicTacToe.MARK_O, this.playerX);
-    }
-
-    //console.log(this.toString());
-
-    this.resetField();
   };
 
   //console.log(this.gameField);
@@ -232,29 +178,58 @@ TicTacToe.PLAYER_UNDEFINED = 0;
 TicTacToe.PLAYER_LOCAL = 1;
 TicTacToe.PLAYER_COMPUTER = 2;
 
-TicTacToe.prototype.snRetrieve = function () {
-  // console.log('Retrieving: ' + localStorage.tictactoe);
+/**
+ *
+ * @param checkbox
+ */
+TicTacToe.prototype.changeSide = function(checkbox) {
+  this.playerIsZero = $(checkbox).is(':checked') ? 1 : 0;
 
-  //var jsonParsed = JSON.parse(localStorage.tictactoe, function(key, value) {
-  //  // console.log(key);
-  //  switch(key) {
-  //    case 'board':
-  //      //aField = new Board();
-  //      //return aField.snRetrieve(value);
-  //
-  //    default:
-  //      return value;
-  //  }
-  //});
-  //
+  if(this.playerIsZero && this.playerO.type != TicTacToe.PLAYER_LOCAL) {
+    this.playerO = new Player(TicTacToe.MARK_O);
+    this.playerX = new Player(TicTacToe.MARK_X, this.playerO);
+  } else {
+    this.playerX = new Player(TicTacToe.MARK_X);
+    this.playerO = new Player(TicTacToe.MARK_O, this.playerX);
+  }
 
-  var jsonParsed = JSON.parse(localStorage.tictactoe);
+  //console.log(this.toString());
 
-  var oldField = this.board;
+  this.resetField();
+};
+
+/**
+ * Функция актуализирует состояние фронт-енда в соответствии с данными из стораджа
+ */
+TicTacToe.prototype.renderStorage = function() {
+  this.board.renderBoard();
+
+  $('#mark_o').attr('checked', this.playerIsZero ? true : false);
+};
+
+TicTacToe.prototype.snStore = function() {
+  if(!this.localStoragePresent) {
+    return;
+  }
+
+  console.log('Storing: ' + JSON.stringify(this));
+
+  localStorage.TicTacToe = JSON.stringify(this);
+};
+
+
+TicTacToe.prototype.snRevive = function () {
+  console.log('Retrieving: ' + localStorage.TicTacToe);
+
+  var jsonParsed = JSON.parse(localStorage.TicTacToe, function(key, value) {
+    if(key && typeof(value) == 'object' && value.snClass && window[value.snClass] && typeof(window[value.snClass].prototype.snRevive) == 'function') {
+      return new window[value.snClass]({revive: value});
+    } else {
+      return value;
+    }
+  });
+
   $.extend(this, jsonParsed);
-  this.board = oldField;
-
-  this.board.snRetrieve(jsonParsed.board);
 
   this.playerX = new Player(TicTacToe.MARK_X, jsonParsed.playerO);
   this.playerO = new Player(TicTacToe.MARK_O, jsonParsed.playerX);

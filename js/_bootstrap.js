@@ -13,6 +13,21 @@ Math.randomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+String.prototype.format = function () {
+  var args = arguments;
+  return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+    if (m == "{{") { return "{"; }
+    if (m == "}}") { return "}"; }
+    return args[n];
+  });
+};
+
+Array.prototype.zeroRecursive = function () {
+  return this.map(function(item){
+    return item instanceof Array ? item.zeroRecursive() : 0;
+  });
+};
+
 var round;
 
 $(document).on('click', '.cell', function(){

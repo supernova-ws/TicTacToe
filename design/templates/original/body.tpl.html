@@ -17,20 +17,10 @@
 
   var fieldWidth = 3;
   var fieldHeight = 3;
-
-//  if(round instanceof Object && !round.fieldsEmpty) {
-//    round.fields = 0;
-//    <!-- BEGIN row -->
-//    round.gameField[{row.Y}] = [];
-//      <!-- BEGIN column -->
-//        round.gameField[{row.Y}][{column.X}] = MARK_NONE;
-//        round.fields++;
-//      <!-- END column -->
-//    <!-- END row -->
-//    round.gameFieldEmpty = $.extend(true, [], round.gameField);
-//    round.fieldsEmpty = round.fields;
-//  }
+  var winStreak = 3;
 </script>
+
+<div id="preload-01"></div>
 
 <div id="game_message">{L_message_player_local}</div>
 
@@ -57,6 +47,30 @@
     <!-- END row -->
   </div>
 </div>
+
+<!--<div style="display: inline-block">-->
+  <!--<div id="game_field2">-->
+    <!--&lt;!&ndash; BEGIN row &ndash;&gt;-->
+    <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
+      <!--&lt;!&ndash; BEGIN column &ndash;&gt;-->
+      <!--&lt;!&ndash; IF column.X == row.Y &ndash;&gt;-->
+        <!--&lt;!&ndash; DEFINE $DIAGONAL_MAIN = 'diagonal_main' &ndash;&gt;-->
+      <!--&lt;!&ndash; ELSE &ndash;&gt;-->
+        <!--&lt;!&ndash; DEFINE $DIAGONAL_MAIN = '' &ndash;&gt;-->
+      <!--&lt;!&ndash; ENDIF &ndash;&gt;-->
+      <!--&lt;!&ndash; IF column.X + row.Y == 2 &ndash;&gt;-->
+        <!--&lt;!&ndash; DEFINE $DIAGONAL_SECONDARY = 'diagonal_secondary' &ndash;&gt;-->
+      <!--&lt;!&ndash; ELSE &ndash;&gt;-->
+        <!--&lt;!&ndash; DEFINE $DIAGONAL_SECONDARY = '' &ndash;&gt;-->
+      <!--&lt;!&ndash; ENDIF &ndash;&gt;-->
+      <!--<div class="cell {$DIAGONAL_MAIN} {$DIAGONAL_SECONDARY}" x="{column.X}" y="{row.Y}">-->
+        <!--Y:{row.Y} X:{column.X}-->
+      <!--</div>-->
+      <!--&lt;!&ndash; END column &ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--&lt;!&ndash; END row &ndash;&gt;-->
+  <!--</div>-->
+<!--</div>-->
 
 <label for="mark_o">{L_input_wanna_be_zero}</label> <input type="checkbox" id="mark_o" value="1" />
 <input type="button" id="game_reset" value="{L_game_reset}" />
