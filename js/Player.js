@@ -4,13 +4,26 @@
  * @param {?Player} otherPlayer - Опциональный параметр - кто уже есть
  * @constructor
  */
-function Player(mark, otherPlayer) {
-  this.type = !otherPlayer || !otherPlayer.type || otherPlayer.type == TicTacToe.PLAYER_COMPUTER ? TicTacToe.PLAYER_LOCAL : TicTacToe.PLAYER_COMPUTER;
-  this.mark = !otherPlayer || !otherPlayer.mark || otherPlayer.mark != mark ? mark : (otherPlayer.mark == TicTacToe.MARK_X ? TicTacToe.MARK_O : TicTacToe.MARK_X);
+function Player(params) {
+  this.snClass = this.constructor.name;
+  !(params instanceof Object) ? params = {} : false;
 
-  this.toString = function() {
-    return JSON.stringify(this);
-  };
+  if(params.revive && typeof(params.revive) == "object" && params.revive.snClass == this.snClass) {
+    this.snRevive(params.revive);
+    return;
+  }
+
+  this._gameRound = params.round;
+
+  this.mark = parseInt(params.mark) ? parseInt(params.mark) : TicTacToe.MARK_X;
+  this.type = parseInt(params.type) ? parseInt(params.type) : TicTacToe.PLAYER_LOCAL;
+
+  // this.brain =
+
+  //this.type = !otherPlayer || !otherPlayer.type || otherPlayer.type == TicTacToe.PLAYER_COMPUTER ? TicTacToe.PLAYER_LOCAL : TicTacToe.PLAYER_COMPUTER;
+  //this.mark = !otherPlayer || !otherPlayer.mark || otherPlayer.mark != mark ? mark : (otherPlayer.mark == TicTacToe.MARK_X ? TicTacToe.MARK_O : TicTacToe.MARK_X);
+
+  // console.log(JSON.stringify(this, ['mark', 'type']));
 
   if(this.type == TicTacToe.PLAYER_LOCAL) {
     this.waitForMove = function() {
@@ -19,7 +32,8 @@ function Player(mark, otherPlayer) {
     };
 
     this.checkMove = function(cell) {
-      var game = window.round;
+      // var game = window.round;
+      var game = this._gameRound;
       var x = parseInt(cell.attr('x'));
       var y = parseInt(cell.attr('y'));
 
@@ -28,38 +42,38 @@ function Player(mark, otherPlayer) {
         sn_sound_play('other_moved');
         game.makeMove({x: x, y: y, mark: game.playerCurrent.mark});
       } else {
-        // todo Сообщение об ошибке
+        // Сообщение об ошибке
         sn_sound_play('fail');
         return false;
       }
     }
   } else {
     this.waitForMove = function() {
-      window.round.makeMove(this.makeMove());
+      this._gameRound.makeMove(this.makeMove());
     };
 
     this.makeMove = function() {
-      //var game = window.round;
-      // TODO - DI
-      var gameField = window.round.board.gameField;
-      var emptyCells = [];
-
-      for(var y in gameField) {
-        if(gameField.hasOwnProperty(y)) {
-          for(var x in gameField[y]) {
-            if(gameField[y].hasOwnProperty(x) && gameField[y][x] == TicTacToe.MARK_NONE) {
-              emptyCells.push({x: x, y: y});
-            }
-          }
-        }
-      }
-//console.log(TicTacToe.MARK_NONE);
+      //var emptyCells = window.round.board.getEmptyCells();
+      var emptyCells = this._gameRound.board.getEmptyCells();
       var cellIndex = Math.randomInt(0, emptyCells.length - 1);
-
-//console.log('cellIndex');
-//console.log(cellIndex);
 
       return $.extend(emptyCells[cellIndex], {mark: this.mark});
     }
   }
 }
+
+Player.prototype.toJSON = function(key) {
+  var shit = $.extend({}, this);
+  for(var i in shit) {
+    if(shit.hasOwnProperty(i) && i.charAt(0) == '_') {
+      shit[i] = undefined;
+    }
+  }
+  // console.log(shit._gameRound instanceof TicTacToe);
+  // shit._gameRound = undefined;
+  return shit;
+};
+
+Player.prototype.snRevive = function (jsonObject) {
+  jsonObject instanceof Object ? $.extend(this, jsonObject) : false;
+};

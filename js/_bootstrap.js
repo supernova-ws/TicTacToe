@@ -43,8 +43,5 @@ $(document).on('click', '#game_reset', function(){
 });
 
 $(document).ready(function() {
-  round = new TicTacToe(TicTacToe.PLAYER_LOCAL);
-
-  round.renderStorage();
-  round.playerCurrent.waitForMove();
+  round = new TicTacToe();
 });

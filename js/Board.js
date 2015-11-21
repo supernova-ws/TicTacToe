@@ -3,23 +3,23 @@
  * Работа с доской
  *
  * @constructor
- * @param param
+ * @params params
  */
-//var Board = function (param) {
-function Board(param) {
-  !(param instanceof Object) ? param = {} : false;
+//var Board = function (params) {
+function Board(params) {
+  this.snClass = this.constructor.name;
+  !(params instanceof Object) ? params = {} : false;
 
-  if(param.revive && typeof(param.revive) == "object" && param.revive.snClass == 'Board') {
-    this.snRevive(param.revive);
+  if(params.revive && typeof(params.revive) == "object" && params.revive.snClass == this.snClass) {
+    this.snRevive(params.revive);
     return;
   }
 
   // this.snClass = 'Board';
-  this.snClass = this.constructor.name;
 
-  this.fieldWidth = parseInt(param.width) ? parseInt(param.width) : 3;
-  this.fieldHeight = parseInt(param.height) ? parseInt(param.height) : 3;
-  this.winStreak = parseInt(param.winStreak) ? parseInt(param.winStreak) : 3;
+  this.fieldWidth = parseInt(params.width) ? parseInt(params.width) : 3;
+  this.fieldHeight = parseInt(params.height) ? parseInt(params.height) : 3;
+  this.winStreak = parseInt(params.winStreak) ? parseInt(params.winStreak) : 3;
 
   this.fields = this.fieldWidth * this.fieldHeight;
 
@@ -136,6 +136,23 @@ Board.prototype.renderBoard = function() {
 
   htmlBoard.width(htmlCell.outerWidth(true) * this.fieldWidth);
   htmlBoard.height(htmlCell.outerHeight(true) * this.fieldHeight);
+};
+
+Board.prototype.getEmptyCells = function() {
+  var emptyCells = [];
+  var gameField = this.gameField;
+
+  for(var y in gameField) {
+    if(gameField.hasOwnProperty(y)) {
+      for(var x in gameField[y]) {
+        if(gameField[y].hasOwnProperty(x) && gameField[y][x] == TicTacToe.MARK_NONE) {
+          emptyCells.push({x: x, y: y});
+        }
+      }
+    }
+  }
+
+  return emptyCells;
 };
 
 Board.prototype.snRevive = function (jsonObject) {
