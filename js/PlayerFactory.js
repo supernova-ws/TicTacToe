@@ -35,8 +35,8 @@ PlayerFactory.getPlayer = function (params) {
     switch(params._gameRound.computerSkill) {
       case TicTacToe.COMPUTER_LG:
         return new PlayerComputerLG(params);
-      //case TicTacToe.COMPUTER_LE:
-      //  return new PlayerComputerLE(params);
+      case TicTacToe.COMPUTER_LE:
+        return new PlayerComputerLE(params);
       case TicTacToe.COMPUTER_CE:
         return new PlayerComputerCE(params);
       default:

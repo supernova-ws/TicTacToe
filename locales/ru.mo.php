@@ -4,7 +4,7 @@
  *
  * @package language
  * @system [Russian]
- * @version #2a0.4#
+ * @version #2d0#
  *
  */
 
@@ -19,7 +19,7 @@ $lang = array(
     'TicTacToe' => 'Крестики-нолики',
     'game_reset' => 'Сбросить игру',
 
-    'input_wanna_be_zero' => 'Хочу быть красным в новой игре!',
+    'input_wanna_be_zero' => 'Хочу быть красным!',
 
     'message_player_local' => 'Ваш ход',
     'message_player_computer' => 'Ход компьютера. Ждите...',

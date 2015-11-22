@@ -1,8 +1,3 @@
-/**
- *
- * @param {!number} newPlayerX
- * @constructor
- */
 
 TicTacToe.WIN_VERTICAL = 0;
 TicTacToe.WIN_HORIZONTAL = 1;
@@ -26,6 +21,15 @@ TicTacToe.COMPUTER_LG = 3;
 /**
  * Конструктор игры
  *
+ * @prop snClass
+ * @prop localStoragePresent
+ * @prop {Board} board - Игровая доска
+ * @prop {PlayerHumanLocal} playerLocal - Локальный игрок
+ * @prop {Player} playerOther - Оппонент
+ * @prop {Player} playerCurrent - Ссылка на текущего игрока
+ * @prop computerSkill - Уровень игры компьютера
+ * @prop playerIsZero - Локальный игрок играет нулём/красными
+ *
  * @param params
  * @constructor
  */
@@ -47,6 +51,11 @@ function TicTacToe(params) {
   this.playerCurrent.waitForMove();
 }
 
+/**
+ * Инициализация игры
+ *
+ * @param params
+ */
 TicTacToe.prototype.gameReset = function(params) {
   this.board = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
 
@@ -59,9 +68,9 @@ TicTacToe.prototype.gameReset = function(params) {
 };
 
 /**
- *
+ * Рестарт игры с параметрами из формы
  */
-TicTacToe.prototype.changeSide = function() {
+TicTacToe.prototype.restartGame = function() {
   this.manageInput();
   this.gameReset();
   this.gameRender();
@@ -71,6 +80,7 @@ TicTacToe.prototype.changeSide = function() {
 
 
 /**
+ * Совершение хода и обработка результатов
  *
  * @param move
  */
@@ -83,7 +93,7 @@ TicTacToe.prototype.makeMove = function(move) {
       sn_sound_play('win');
 
       alert(l.message_player_win[this.playerCurrent.type]);
-      this.changeSide();
+      this.restartGame();
 
       break;
     }
@@ -92,7 +102,7 @@ TicTacToe.prototype.makeMove = function(move) {
       sn_sound_play('game_over');
 
       alert(l.message_player_win[TicTacToe.PLAYER_UNDEFINED]);
-      this.changeSide();
+      this.restartGame();
       break;
     }
 
@@ -101,7 +111,7 @@ TicTacToe.prototype.makeMove = function(move) {
 
       this.playerCurrent = this.playerCurrent.mark == this.playerLocal.mark ? this.playerOther : this.playerLocal;
 
-      $('#game_message').text(l.message_player[this.playerCurrent.type]);
+      $('#gameMessage').text(l.message_player[this.playerCurrent.type]);
 
       this.snStore();
 
@@ -135,13 +145,15 @@ TicTacToe.prototype.makeMove = function(move) {
 //};
 
 /**
- * Функция актуализирует состояние фронт-енда в соответствии с состоянием объекта
+ * Функция актуализирует состояние фронт-енда в соответствии с внутренним состоянием игры
  */
 TicTacToe.prototype.gameRender = function() {
   this.board.renderBoard();
 
   $('#mark_o').attr('checked', this.playerIsZero ? true : false);
   $('input:radio[name=computerSkill]').val([this.computerSkill]);
+//console.log(this.playerCurrent);
+  $('#gameMessage').text(l.message_player[this.playerCurrent.type]);
 };
 
 /**
@@ -152,7 +164,16 @@ TicTacToe.prototype.manageInput = function() {
   this.computerSkill = parseInt($('input:radio[name=computerSkill]:checked').val());
 };
 
-function testStringify(key, value) {
+/**
+ * Фильтр для стрингификации объектов
+ * Не допускает попадание приватных свойств (начинающихся с '_' - например, DI-свойства и, соответственно, не допускает цикличности)
+ * Так же патчит работу Opera 12
+ *
+ * @param key
+ * @param value
+ * @returns {undefined|*}
+ */
+TicTacToe.prototype.snStringify = function (key, value) {
   result = undefined;
   //console.log('key = "{0}", key type = {1}, type = "{2}"'.format(key, typeof(key), typeof(value)));
   //console.log(value instanceof Array);
@@ -167,24 +188,34 @@ function testStringify(key, value) {
   }
 
   return result;
-}
+};
 
+/**
+ * Сохранение состояния игры в сторадж
+ */
 TicTacToe.prototype.snStore = function() {
   if(!this.localStoragePresent) {
     return;
   }
 
-  localStorage.TicTacToe = JSON.stringify(this, testStringify);
-  console.log('Storing: ' + localStorage.TicTacToe);
+  localStorage.TicTacToe = JSON.stringify(this, this.snStringify);
+//console.log('Storing: ' + localStorage.TicTacToe);
   //console.log('Storing: ' + JSON.stringify(this, testStringify));
   //localStorage.TicTacToe = '';
 };
+
+/**
+ * Загрузка состояния игры из стораджа
+ *
+ * @param params
+ * @returns {boolean}
+ */
 TicTacToe.prototype.gameLoad = function (params) {
   if(!this.localStoragePresent || !localStorage.TicTacToe) {
     return false;
   }
 
-  console.log('Retrieving: ' + localStorage.TicTacToe);
+//console.log('Retrieving: ' + localStorage.TicTacToe);
 
   var _that = this;
 
@@ -204,9 +235,9 @@ TicTacToe.prototype.gameLoad = function (params) {
 
   this.playerCurrent = _jsonParsed.playerCurrent.mark == this.playerLocal.mark ? this.playerLocal : this.playerOther;
 
-  console.log(this.playerCurrent);
+  //console.log(this.playerCurrent);
 
-  console.log('Revived');
+//console.log('Revived');
 
   return true;
 };
