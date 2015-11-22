@@ -4,7 +4,7 @@
  *
  * @package language
  * @system [Russian]
- * @version #1d0#
+ * @version #2a0.4#
  *
  */
 
@@ -29,5 +29,15 @@ $lang = array(
     'message_player_win_computer' => 'Поражение! Вы проиграли!',
 
     'error_wrong_turn' => 'Сейчас не ваш ход!',
+
+    'computerLG' => 'computerLG',
+    'computerNG' => 'computerNG',
+    'computerCG' => 'computerCG',
+    'computerLN' => 'computerLN',
+    'computerNN' => 'computerNN',
+    'computerCN' => 'computerCN',
+    'computerLE' => 'computerLE',
+    'computerNE' => 'computerNE',
+    'computerCE' => 'computerCE',
 
 );

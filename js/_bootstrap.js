@@ -14,11 +14,11 @@ Math.randomInt = function(min, max) {
 };
 
 String.prototype.format = function () {
-  var args = arguments;
+  var _args = arguments;
   return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
     if (m == "{{") { return "{"; }
     if (m == "}}") { return "}"; }
-    return args[n];
+    return _args[n];
   });
 };
 
@@ -30,12 +30,15 @@ Array.prototype.zeroRecursive = function () {
 
 var round;
 
-$(document).on('click', '.cell', function(){
-  round.localPlayer.checkMove($(this));
+// localStorage.TicTacToe = '';
+// console.log();
+
+$(document).on('change', '#mark_o, input[name=computerSkill]', function(){
+  round.changeSide();
 });
 
-$(document).on('change', '#mark_o', function(){
-  round.changeSide($(this));
+$(document).on('click', '.cell', function() {
+  round.playerLocal.checkMove($(this));
 });
 
 $(document).on('click', '#game_reset', function(){

@@ -10,8 +10,9 @@ function Board(params) {
   this.snClass = this.constructor.name;
   !(params instanceof Object) ? params = {} : false;
 
-  if(params.revive && typeof(params.revive) == "object" && params.revive.snClass == this.snClass) {
-    this.snRevive(params.revive);
+  if(params._revive && typeof(params._revive) == "object" && params._revive.snClass == this.snClass) {
+    //console.log('BOARD REVIVE');
+    this.snRevive(params._revive);
     return;
   }
 
@@ -34,9 +35,9 @@ function Board(params) {
   }
   //this.gameFieldEmpty = $.extend(true, [], this.gameField);
   //this.fieldsEmpty = this.fields = this.fieldWidth * this.fieldHeight;
-};
+}
 
-Board.prototype.makeMove = function (move){
+Board.prototype.placeMark = function (move){
   if((!move) || !(move instanceof Object)) {
     return 'error';
   }
@@ -93,23 +94,17 @@ Board.prototype.makeMove = function (move){
 Board.prototype.resetField = function() {
   $('.cell').removeClass('mark_x mark_o mark_win');
 
-  //this.gameField = $.extend(true, [], this.gameFieldEmpty);
-  //this.fields = this.fieldsEmpty;
   this.fields = this.fieldWidth * this.fieldHeight;
   this.gameField = this.gameField.zeroRecursive();
 };
 
-Board.prototype.checkCell = function(y, x) {
+Board.prototype.getCellMark = function(y, x) {
   return this.gameField[y] && typeof(this.gameField[y][x]) != 'undefined' ? this.gameField[y][x] : TicTacToe.MARK_OUTSIDE;
 };
 
 Board.prototype.renderBoard = function() {
   var htmlCell;
   var htmlBoard = $('#game_field').html('');
-  //htmlBoard.html('');
-  //var atemp = $('<div class="cell">&nbsp;</div>');
-  //console.log(atemp.width());
-
 
   var gameField = this.gameField;
   for(var y in gameField) {
@@ -131,8 +126,6 @@ Board.prototype.renderBoard = function() {
       }
     }
   }
-
-  //console.log(htmlCell.width() * this.fieldWidth);
 
   htmlBoard.width(htmlCell.outerWidth(true) * this.fieldWidth);
   htmlBoard.height(htmlCell.outerHeight(true) * this.fieldHeight);
@@ -156,5 +149,7 @@ Board.prototype.getEmptyCells = function() {
 };
 
 Board.prototype.snRevive = function (jsonObject) {
+//console.log('jsonObject');
+//console.log(jsonObject);
   jsonObject instanceof Object ? $.extend(this, jsonObject) : false;
 };

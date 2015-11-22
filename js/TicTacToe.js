@@ -4,43 +4,6 @@
  * @constructor
  */
 
-//localStorage.TicTacToe = '';
-
-function TicTacToe(params) {
-  this.snClass = this.constructor.name;
-  !(params instanceof Object) ? params = {} : false;
-//var TicTacToe = function (newPlayerX) {
-  // TODO - разобраться со статическими методами в JS - и, если нужно, позаменять везде TicTacToe.XXX на this.XXX
-
-  //console.log(this.constructor.name);
-  //console.log(Function.prototype.name);
-  //console.log(Function.prototype.name === undefined);
-
-  this.localStoragePresent = typeof(localStorage) !== "undefined";
-
-  if(this.localStoragePresent && localStorage.TicTacToe) {
-    this.snRevive();
-//console.log('this.playerCurrent');
-//console.log(this.playerCurrent);
-  } else {
-    this.board = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
-
-    this.playerX = new Player({round: this} );
-    this.playerO = new Player({round: this, mark: TicTacToe.MARK_O, type: TicTacToe.PLAYER_COMPUTER});
-
-    this.playerCurrent = this.playerX;
-
-    this.playerIsZero = 0;
-  }
-
-  this.localPlayer = this.playerX.type == TicTacToe.PLAYER_LOCAL ? this.playerX : this.playerO;
-
-  this.board.renderBoard();
-
-  this.renderStorage();
-  this.playerCurrent.waitForMove();
-}
-
 TicTacToe.WIN_VERTICAL = 0;
 TicTacToe.WIN_HORIZONTAL = 1;
 TicTacToe.WIN_DIAGONAL_MAIN = 2;
@@ -55,15 +18,82 @@ TicTacToe.PLAYER_UNDEFINED = 0;
 TicTacToe.PLAYER_LOCAL = 1;
 TicTacToe.PLAYER_COMPUTER = 2;
 
+TicTacToe.COMPUTER_CE = 1;
+TicTacToe.COMPUTER_LE = 2;
+TicTacToe.COMPUTER_LG = 3;
+
+//var TicTacToe = function (newPlayerX) {
+/**
+ * Конструктор игры
+ *
+ * @param params
+ * @constructor
+ */
+function TicTacToe(params) {
+  this.snClass = this.constructor.name;
+  params = $.extend(params instanceof Object ? params : {}, {_gameRound: this});
+
+  this.localStoragePresent = typeof(localStorage) !== "undefined";
+
+  if(this.localStoragePresent && localStorage.TicTacToe) {
+    this.gameLoad(params);
+  } else {
+    this.computerSkill = TicTacToe.COMPUTER_CE;
+    this.playerIsZero = 0;
+
+    this.gameReset(params);
+  }
+
+  this.gameRender();
+
+  //$(document).on('snMakeMove', {that: this}, function(event, move) {
+  //  event.data.that.makeMove(move);
+  //});
+
+  this.playerCurrent.waitForMove();
+}
+
+TicTacToe.prototype.gameReset = function(params) {
+  this.board = undefined;
+  this.playerLocal = undefined;
+  this.playerOther = undefined;
+
+  this.board = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
+
+  this.playerLocal = PlayerFactory.getPlayer({_gameRound: this, type: TicTacToe.PLAYER_LOCAL});
+  this.playerOther = PlayerFactory.getPlayer({_gameRound: this, type: TicTacToe.PLAYER_COMPUTER});
+
+  //this.playerLocal = PlayerFactory.getPlayer({_gameRound: this, mark: TicTacToe.MARK_X, type: TicTacToe.PLAYER_LOCAL});
+  //this.playerOther = PlayerFactory.getPlayer({_gameRound: this, mark: TicTacToe.MARK_O, type: TicTacToe.PLAYER_COMPUTER});
+
+  this.playerCurrent = this.playerLocal.mark == TicTacToe.MARK_X ? this.playerLocal : this.playerOther;
+};
+
+/**
+ *
+ * @param checkbox
+ */
+TicTacToe.prototype.changeSide = function() {
+  this.manageInput();
+
+  this.gameReset();
+
+  this.gameRender();
+
+  this.playerCurrent.waitForMove();
+};
+
+
 TicTacToe.prototype.makeMove = function(move) {
-  var result = this.board.makeMove(move);
+  var result = this.board.placeMark(move);
+
   switch(result) {
     case 'currentPlayerWin': {
       // Звук победы
       sn_sound_play('win');
 
       alert(l.message_player_win[this.playerCurrent.type]);
-      this.resetField();
+      this.changeSide();
 
       break;
     }
@@ -72,12 +102,15 @@ TicTacToe.prototype.makeMove = function(move) {
       sn_sound_play('game_over');
 
       alert(l.message_player_win[TicTacToe.PLAYER_UNDEFINED]);
-      this.resetField();
+      this.changeSide();
       break;
     }
 
     case 'nextMove': {
-      this.playerCurrent = this.playerCurrent.mark == TicTacToe.MARK_X ? this.playerO : this.playerX;
+      this.playerCurrent.mark != this.playerLocal.mark ? sn_sound_play('other_moved') : false;
+
+      this.playerCurrent = this.playerCurrent.mark == this.playerLocal.mark ? this.playerOther : this.playerLocal;
+
       $('#game_message').text(l.message_player[this.playerCurrent.type]);
 
       this.snStore();
@@ -101,8 +134,7 @@ TicTacToe.prototype.makeMove = function(move) {
 TicTacToe.prototype.resetField = function() {
   this.board.resetField();
 
-  this.localPlayer = this.playerX.type == TicTacToe.PLAYER_LOCAL ? this.playerX : this.playerO;
-  this.playerCurrent = this.playerX;
+  this.playerCurrent = this.playerLocal;
   $('#game_message').text(l.message_player[this.playerCurrent.type]);
 
   if(this.localStoragePresent) {
@@ -112,69 +144,110 @@ TicTacToe.prototype.resetField = function() {
   this.playerCurrent.waitForMove();
 };
 
-
 /**
- *
- * @param checkbox
+ * Функция актуализирует состояние фронт-енда в соответствии с состоянием объекта
  */
-TicTacToe.prototype.changeSide = function(checkbox) {
-  this.playerIsZero = $(checkbox).is(':checked') ? 1 : 0;
-
-  this.playerX = new Player({round: this, mark: TicTacToe.MARK_X, type: this.playerIsZero ? TicTacToe.PLAYER_COMPUTER : TicTacToe.PLAYER_LOCAL});
-  this.playerO = new Player({round: this, mark: TicTacToe.MARK_O, type: this.playerIsZero ? TicTacToe.PLAYER_LOCAL : TicTacToe.PLAYER_COMPUTER});
-
-  this.resetField();
-};
-
-/**
- * Функция актуализирует состояние фронт-енда в соответствии с данными из стораджа
- */
-TicTacToe.prototype.renderStorage = function() {
+TicTacToe.prototype.gameRender = function() {
   this.board.renderBoard();
 
   $('#mark_o').attr('checked', this.playerIsZero ? true : false);
+  $('input:radio[name=computerSkill]').val([this.computerSkill]);
 };
+
+/**
+ * Читает данные из формы
+ */
+TicTacToe.prototype.manageInput = function() {
+  this.playerIsZero = $('#mark_o').is(':checked') ? 1 : 0;
+  this.computerSkill = parseInt($('input:radio[name=computerSkill]:checked').val());
+};
+
+function testStringify(key, value) {
+  result = undefined;
+  //console.log('key = "{0}", key type = {1}, type = "{2}"'.format(key, typeof(key), typeof(value)));
+  //console.log(value instanceof Array);
+  //console.log(value);
+  if(typeof(key) == 'number' || key.charAt(0) != '_') {
+    if(value instanceof Array) {
+      result = JSON.parse(JSON.stringify(value)); // Fix for Opera 12
+    } else {
+      result = value;
+    }
+    result = value;
+  }
+
+  return result;
+}
 
 TicTacToe.prototype.snStore = function() {
   if(!this.localStoragePresent) {
     return;
   }
 
-  console.log('Storing: ' + JSON.stringify(this));
+  //console.log(this);
 
-  localStorage.TicTacToe = JSON.stringify(this);
+  //console.log('Storing: ' + JSON.stringify(this, function(key, value) ));
+  //console.log('Storing: ' + JSON.stringify(this, function(key, value) ));
+
+  // console.log(this);
+  // TODO - Включить
+  localStorage.TicTacToe = JSON.stringify(this, testStringify);
+  console.log('Storing: ' + localStorage.TicTacToe);
+  //console.log('Storing: ' + JSON.stringify(this, testStringify));
+  //localStorage.TicTacToe = '';
 };
-
-TicTacToe.prototype.snRevive = function () {
-  if(!this.localStoragePresent) {
+TicTacToe.prototype.gameLoad = function (params) {
+  if(!this.localStoragePresent || !localStorage.TicTacToe) {
     return;
   }
 
   console.log('Retrieving: ' + localStorage.TicTacToe);
 
-  var that = this;
+  var _that = this;
 
-  var jsonParsed = JSON.parse(localStorage.TicTacToe, function(key, value) {
+  //console.log('1');
+  var _jsonParsed = JSON.parse(localStorage.TicTacToe, function(key, value) {
     if(key && typeof(value) == 'object' && value.snClass && window[value.snClass] && typeof(window[value.snClass].prototype.snRevive) == 'function') {
-      return new window[value.snClass]({revive: $.extend({_gameRound: that}, value)});
+//console.log('1111 ' + key);
+      return new window[value.snClass]({_revive: $.extend({_gameRound: _that}, value)});
+      //return new window[value.snClass]({_revive: value});
     } else {
       return value;
     }
   });
+  //console.log('2');
 
-  $.extend(this, jsonParsed);
+  //console.log(_jsonParsed);
 
-  //console.log('jsonParsed.playerX');
-  //console.log(jsonParsed.playerX);
-  //console.log('this.playerX');
-  //console.log(this.playerX);
+  $.extend(this, _jsonParsed);
 
-  // TODO - Убрать, когда будут нормальные игроки
-  this.playerX = new Player($.extend({round: this}, jsonParsed.playerX));
-  this.playerO = new Player($.extend({round: this}, jsonParsed.playerO));
+//console.log(_jsonParsed);
 
-  //this.playerX = new Player(TicTacToe.MARK_X, jsonParsed.playerO);
-  //this.playerO = new Player(TicTacToe.MARK_O, jsonParsed.playerX);
+  //console.log('jsonParsed.playerLocal');
+  //console.log(jsonParsed.playerLocal);
+  //console.log('this.playerLocal');
+  //console.log(this.playerLocal);
 
-  this.playerCurrent = jsonParsed.playerCurrent.mark == TicTacToe.MARK_X ? this.playerX : this.playerO;
+  // TODO - Убрать, когда будут нормальные фабрики
+  this.playerLocal = PlayerFactory.getPlayer($.extend({_gameRound: this}, _jsonParsed.playerLocal));
+  this.playerOther = PlayerFactory.getPlayer($.extend({_gameRound: this}, _jsonParsed.playerOther));
+  //this.playerLocal = new Player($.extend({_gameRound: this}, jsonParsed.playerLocal));
+  //this.playerOther = new Player($.extend({_gameRound: this}, jsonParsed.playerOther));
+
+  //this.playerLocal = new Player(TicTacToe.MARK_X, jsonParsed.playerOther);
+  //this.playerOther = new Player(TicTacToe.MARK_O, jsonParsed.playerLocal);
+
+  //
+  //this.board2 = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
+  //
+  //console.log(this.board2);
+
+
+
+  // this.playerCurrent = _jsonParsed.playerCurrent.mark == TicTacToe.MARK_X ? this.playerLocal : this.playerOther;
+  this.playerCurrent = _jsonParsed.playerCurrent.mark == this.playerLocal.mark ? this.playerLocal : this.playerOther;
+
+  console.log(this.playerCurrent);
+
+  console.log('Revived');
 };

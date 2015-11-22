@@ -48,32 +48,19 @@
   </div>
 </div>
 
-<!--<div style="display: inline-block">-->
-  <!--<div id="game_field2">-->
-    <!--&lt;!&ndash; BEGIN row &ndash;&gt;-->
-    <!--&lt;!&ndash;<div class="row">&ndash;&gt;-->
-      <!--&lt;!&ndash; BEGIN column &ndash;&gt;-->
-      <!--&lt;!&ndash; IF column.X == row.Y &ndash;&gt;-->
-        <!--&lt;!&ndash; DEFINE $DIAGONAL_MAIN = 'diagonal_main' &ndash;&gt;-->
-      <!--&lt;!&ndash; ELSE &ndash;&gt;-->
-        <!--&lt;!&ndash; DEFINE $DIAGONAL_MAIN = '' &ndash;&gt;-->
-      <!--&lt;!&ndash; ENDIF &ndash;&gt;-->
-      <!--&lt;!&ndash; IF column.X + row.Y == 2 &ndash;&gt;-->
-        <!--&lt;!&ndash; DEFINE $DIAGONAL_SECONDARY = 'diagonal_secondary' &ndash;&gt;-->
-      <!--&lt;!&ndash; ELSE &ndash;&gt;-->
-        <!--&lt;!&ndash; DEFINE $DIAGONAL_SECONDARY = '' &ndash;&gt;-->
-      <!--&lt;!&ndash; ENDIF &ndash;&gt;-->
-      <!--<div class="cell {$DIAGONAL_MAIN} {$DIAGONAL_SECONDARY}" x="{column.X}" y="{row.Y}">-->
-        <!--Y:{row.Y} X:{column.X}-->
-      <!--</div>-->
-      <!--&lt;!&ndash; END column &ndash;&gt;-->
-    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash; END row &ndash;&gt;-->
-  <!--</div>-->
-<!--</div>-->
+<div style="display: inline-block;">
+<label for="mark_o">{L_input_wanna_be_zero}</label> <input type="checkbox" id="mark_o" value="1" /><br />
+<input type="button" id="game_reset" value="{L_game_reset}" /><br />
 
-<label for="mark_o">{L_input_wanna_be_zero}</label> <input type="checkbox" id="mark_o" value="1" />
-<input type="button" id="game_reset" value="{L_game_reset}" />
+<!-- TODO - Убрать порнуху -->
+<!-- DEFINE $COMPUTER_CE = '1' -->
+<!-- DEFINE $COMPUTER_LE = '2' -->
+<!-- DEFINE $COMPUTER_LG = '3' -->
+
+<label for="computerCE">{L_computerCE}</label> <input type="radio" id="computerCE" value="{$COMPUTER_CE}" name="computerSkill" /><br />
+<!--<label for="computerLE">{L_computerLE}</label> <input type="radio" id="computerLE" value="{$COMPUTER_LE}" name="computerSkill" /><br />-->
+<label for="computerLG">{L_computerLG}</label> <input type="radio" id="computerLG" value="{$COMPUTER_LG}" name="computerSkill" /><br />
+</div>
 
 <div>
   Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a>
