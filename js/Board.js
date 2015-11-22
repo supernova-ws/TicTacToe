@@ -16,8 +16,6 @@ function Board(params) {
     return;
   }
 
-  // this.snClass = 'Board';
-
   this.fieldWidth = parseInt(params.width) ? parseInt(params.width) : 3;
   this.fieldHeight = parseInt(params.height) ? parseInt(params.height) : 3;
   this.winStreak = parseInt(params.winStreak) ? parseInt(params.winStreak) : 3;
@@ -33,8 +31,6 @@ function Board(params) {
       }
     }
   }
-  //this.gameFieldEmpty = $.extend(true, [], this.gameField);
-  //this.fieldsEmpty = this.fields = this.fieldWidth * this.fieldHeight;
 }
 
 Board.prototype.placeMark = function (move){
@@ -42,52 +38,50 @@ Board.prototype.placeMark = function (move){
     return 'error';
   }
 
-  {
-    this.gameField[move.y][move.x] == TicTacToe.MARK_NONE ? this.fields-- : false;
-    this.gameField[move.y][move.x] = move.mark;
+  this.gameField[move.y][move.x] == TicTacToe.MARK_NONE ? this.fields-- : false;
+  this.gameField[move.y][move.x] = move.mark;
 
-    $('[x=' + move.x + '][y=' + move.y + ']').addClass(move.mark == TicTacToe.MARK_X ? 'mark_x' : 'mark_o').attr('mark', move.mark);
+  $('[x=' + move.x + '][y=' + move.y + ']').addClass(move.mark == TicTacToe.MARK_X ? 'mark_x' : 'mark_o').attr('mark', move.mark);
 
-    var win = [0,0,0,0];
-    for(var i = 0; i < 3; i++) {
-      // Проверяем главную диагональ \
-      move.x == move.y && this.gameField[i][i] == move.mark ? win[TicTacToe.WIN_DIAGONAL_MAIN]++ : false;
-      (move.x + move.y) == 2 && this.gameField[i][2 - i] == move.mark ? win[TicTacToe.WIN_DIAGONAL_SECONDARY]++ : false;
+  var win = [0,0,0,0];
+  for(var i = 0; i < 3; i++) {
+    // Проверяем главную диагональ \
+    move.x == move.y && this.gameField[i][i] == move.mark ? win[TicTacToe.WIN_DIAGONAL_MAIN]++ : false;
+    (move.x + move.y) == 2 && this.gameField[i][2 - i] == move.mark ? win[TicTacToe.WIN_DIAGONAL_SECONDARY]++ : false;
 
-      // Проверяем вертикаль
-      this.gameField[i][move.x] == move.mark ? win[TicTacToe.WIN_VERTICAL]++ : false;
-      // Проверяем горизонталь
-      this.gameField[move.y][i] == move.mark ? win[TicTacToe.WIN_HORIZONTAL]++ : false;
+    // Проверяем вертикаль
+    this.gameField[i][move.x] == move.mark ? win[TicTacToe.WIN_VERTICAL]++ : false;
+    // Проверяем горизонталь
+    this.gameField[move.y][i] == move.mark ? win[TicTacToe.WIN_HORIZONTAL]++ : false;
+  }
+
+  var max = Math.max.apply(null, win);
+  if(max == 3) {
+    var winSelector = [];
+    var winMethod = win.indexOf(max);
+    switch(winMethod) {
+      case TicTacToe.WIN_VERTICAL:
+        winSelector.push('[x=' + move.x + ']');
+        break;
+      case TicTacToe.WIN_HORIZONTAL:
+        winSelector.push('[y=' + move.y + ']');
+        break;
+      case TicTacToe.WIN_DIAGONAL_MAIN:
+        winSelector.push('.diagonal_main');
+        break;
+      case TicTacToe.WIN_DIAGONAL_SECONDARY:
+        winSelector.push('.diagonal_secondary');
+        break;
     }
+    $(winSelector.join('&nbsp;')).addClass('mark_win');
 
-    var max = Math.max.apply(null, win);
-    if(max == 3) {
-      var winSelector = [];
-      var winMethod = win.indexOf(max);
-      switch(winMethod) {
-        case TicTacToe.WIN_VERTICAL:
-          winSelector.push('[x=' + move.x + ']');
-          break;
-        case TicTacToe.WIN_HORIZONTAL:
-          winSelector.push('[y=' + move.y + ']');
-          break;
-        case TicTacToe.WIN_DIAGONAL_MAIN:
-          winSelector.push('.diagonal_main');
-          break;
-        case TicTacToe.WIN_DIAGONAL_SECONDARY:
-          winSelector.push('.diagonal_secondary');
-          break;
-      }
-      $(winSelector.join('&nbsp;')).addClass('mark_win');
+    return 'currentPlayerWin';
+  }
 
-      return 'currentPlayerWin';
-    }
-
-    if(this.fields <= 0) {
-      return 'draw';
-    } else {
-      return 'nextMove';
-    }
+  if(this.fields <= 0) {
+    return 'draw';
+  } else {
+    return 'nextMove';
   }
 };
 
@@ -104,7 +98,7 @@ Board.prototype.getCellMark = function(y, x) {
 
 Board.prototype.renderBoard = function() {
   var htmlCell;
-  var htmlBoard = $('#game_field').html('');
+  var htmlBoard = $('#gameField').html('');
 
   var gameField = this.gameField;
   for(var y in gameField) {
@@ -127,7 +121,7 @@ Board.prototype.renderBoard = function() {
     }
   }
 
-  htmlBoard.width(htmlCell.outerWidth(true) * this.fieldWidth);
+  htmlBoard.width(htmlCell.outerWidth(true) * this.fieldWidth).css('min-width', htmlBoard.width());
   htmlBoard.height(htmlCell.outerHeight(true) * this.fieldHeight);
 };
 
@@ -149,7 +143,5 @@ Board.prototype.getEmptyCells = function() {
 };
 
 Board.prototype.snRevive = function (jsonObject) {
-//console.log('jsonObject');
-//console.log(jsonObject);
   jsonObject instanceof Object ? $.extend(this, jsonObject) : false;
 };

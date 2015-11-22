@@ -1,14 +1,27 @@
 body {
   max-height: 10000000em;
+
+  margin: 0 0.5em;
 }
 
 h1 {
   text-align: center;
 }
 
+#pageBody {
+  display: flex;
+  flex-wrap: wrap;
 
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+}
 
-#game_field, #game_field2 {
+#gameMessage {
+  text-align: center;
+}
+
+#gameField {
   display: flex;
   text-align: center;
   justify-content: center;
@@ -20,9 +33,11 @@ h1 {
   background-color: black;
 }
 
+#gameControls {
+  margin: 0 1em;
+}
+
 .row {
-  /*height: 11em;*/
-  /*width: 33em;*/
 }
 
 .cell {
@@ -43,8 +58,6 @@ h1 {
   background-color: red;
 }
 
-#preload-01 { background: url("./../../../images/crown37.png") no-repeat -9999px -9999px; }
-
 .mark_win:after {
   content: url("./../../../images/crown37.png");
   position: absolute;
@@ -54,3 +67,5 @@ h1 {
   left: 0;
   /*background-color: yellow !important;*/
 }
+
+#preload-01 { background: url("./../../../images/crown37.png") no-repeat -9999px -9999px; }

@@ -35,9 +35,7 @@ function TicTacToe(params) {
 
   this.localStoragePresent = typeof(localStorage) !== "undefined";
 
-  if(this.localStoragePresent && localStorage.TicTacToe) {
-    this.gameLoad(params);
-  } else {
+  if(!this.gameLoad(params)) {
     this.computerSkill = TicTacToe.COMPUTER_CE;
     this.playerIsZero = 0;
 
@@ -46,44 +44,36 @@ function TicTacToe(params) {
 
   this.gameRender();
 
-  //$(document).on('snMakeMove', {that: this}, function(event, move) {
-  //  event.data.that.makeMove(move);
-  //});
-
   this.playerCurrent.waitForMove();
 }
 
 TicTacToe.prototype.gameReset = function(params) {
-  this.board = undefined;
-  this.playerLocal = undefined;
-  this.playerOther = undefined;
-
   this.board = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
 
   this.playerLocal = PlayerFactory.getPlayer({_gameRound: this, type: TicTacToe.PLAYER_LOCAL});
   this.playerOther = PlayerFactory.getPlayer({_gameRound: this, type: TicTacToe.PLAYER_COMPUTER});
 
-  //this.playerLocal = PlayerFactory.getPlayer({_gameRound: this, mark: TicTacToe.MARK_X, type: TicTacToe.PLAYER_LOCAL});
-  //this.playerOther = PlayerFactory.getPlayer({_gameRound: this, mark: TicTacToe.MARK_O, type: TicTacToe.PLAYER_COMPUTER});
-
   this.playerCurrent = this.playerLocal.mark == TicTacToe.MARK_X ? this.playerLocal : this.playerOther;
+
+  this.snStore();
 };
 
 /**
  *
- * @param checkbox
  */
 TicTacToe.prototype.changeSide = function() {
   this.manageInput();
-
   this.gameReset();
-
   this.gameRender();
 
   this.playerCurrent.waitForMove();
 };
 
 
+/**
+ *
+ * @param move
+ */
 TicTacToe.prototype.makeMove = function(move) {
   var result = this.board.placeMark(move);
 
@@ -131,18 +121,18 @@ TicTacToe.prototype.makeMove = function(move) {
 /**
  * Функция обнуляет игру
  */
-TicTacToe.prototype.resetField = function() {
-  this.board.resetField();
-
-  this.playerCurrent = this.playerLocal;
-  $('#game_message').text(l.message_player[this.playerCurrent.type]);
-
-  if(this.localStoragePresent) {
-    localStorage.TicTacToe = '';
-  }
-
-  this.playerCurrent.waitForMove();
-};
+//TicTacToe.prototype.resetField = function() {
+//  this.board.resetField();
+//
+//  this.playerCurrent = this.playerLocal;
+//  $('#game_message').text(l.message_player[this.playerCurrent.type]);
+//
+//  if(this.localStoragePresent) {
+//    localStorage.TicTacToe = '';
+//  }
+//
+//  this.playerCurrent.waitForMove();
+//};
 
 /**
  * Функция актуализирует состояние фронт-енда в соответствии с состоянием объекта
@@ -184,13 +174,6 @@ TicTacToe.prototype.snStore = function() {
     return;
   }
 
-  //console.log(this);
-
-  //console.log('Storing: ' + JSON.stringify(this, function(key, value) ));
-  //console.log('Storing: ' + JSON.stringify(this, function(key, value) ));
-
-  // console.log(this);
-  // TODO - Включить
   localStorage.TicTacToe = JSON.stringify(this, testStringify);
   console.log('Storing: ' + localStorage.TicTacToe);
   //console.log('Storing: ' + JSON.stringify(this, testStringify));
@@ -198,56 +181,32 @@ TicTacToe.prototype.snStore = function() {
 };
 TicTacToe.prototype.gameLoad = function (params) {
   if(!this.localStoragePresent || !localStorage.TicTacToe) {
-    return;
+    return false;
   }
 
   console.log('Retrieving: ' + localStorage.TicTacToe);
 
   var _that = this;
 
-  //console.log('1');
   var _jsonParsed = JSON.parse(localStorage.TicTacToe, function(key, value) {
     if(key && typeof(value) == 'object' && value.snClass && window[value.snClass] && typeof(window[value.snClass].prototype.snRevive) == 'function') {
-//console.log('1111 ' + key);
       return new window[value.snClass]({_revive: $.extend({_gameRound: _that}, value)});
-      //return new window[value.snClass]({_revive: value});
     } else {
       return value;
     }
   });
-  //console.log('2');
-
-  //console.log(_jsonParsed);
 
   $.extend(this, _jsonParsed);
-
-//console.log(_jsonParsed);
-
-  //console.log('jsonParsed.playerLocal');
-  //console.log(jsonParsed.playerLocal);
-  //console.log('this.playerLocal');
-  //console.log(this.playerLocal);
 
   // TODO - Убрать, когда будут нормальные фабрики
   this.playerLocal = PlayerFactory.getPlayer($.extend({_gameRound: this}, _jsonParsed.playerLocal));
   this.playerOther = PlayerFactory.getPlayer($.extend({_gameRound: this}, _jsonParsed.playerOther));
-  //this.playerLocal = new Player($.extend({_gameRound: this}, jsonParsed.playerLocal));
-  //this.playerOther = new Player($.extend({_gameRound: this}, jsonParsed.playerOther));
 
-  //this.playerLocal = new Player(TicTacToe.MARK_X, jsonParsed.playerOther);
-  //this.playerOther = new Player(TicTacToe.MARK_O, jsonParsed.playerLocal);
-
-  //
-  //this.board2 = new Board({height: fieldHeight, width: fieldWidth, winStreak: winStreak});
-  //
-  //console.log(this.board2);
-
-
-
-  // this.playerCurrent = _jsonParsed.playerCurrent.mark == TicTacToe.MARK_X ? this.playerLocal : this.playerOther;
   this.playerCurrent = _jsonParsed.playerCurrent.mark == this.playerLocal.mark ? this.playerLocal : this.playerOther;
 
   console.log(this.playerCurrent);
 
   console.log('Revived');
+
+  return true;
 };

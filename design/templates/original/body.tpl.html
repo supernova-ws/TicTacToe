@@ -22,48 +22,25 @@
 
 <div id="preload-01"></div>
 
-<div id="game_message">{L_message_player_local}</div>
 
-<div style="display: inline-block">
-  <div id="game_field">
-    <!-- BEGIN row -->
-    <!--<div class="row">-->
-      <!-- BEGIN column -->
-      <!-- IF column.X == row.Y -->
-        <!-- DEFINE $DIAGONAL_MAIN = 'diagonal_main' -->
-      <!-- ELSE -->
-        <!-- DEFINE $DIAGONAL_MAIN = '' -->
-      <!-- ENDIF -->
-      <!-- IF column.X + row.Y == 2 -->
-        <!-- DEFINE $DIAGONAL_SECONDARY = 'diagonal_secondary' -->
-      <!-- ELSE -->
-        <!-- DEFINE $DIAGONAL_SECONDARY = '' -->
-      <!-- ENDIF -->
-      <div class="cell {$DIAGONAL_MAIN} {$DIAGONAL_SECONDARY}" x="{column.X}" y="{row.Y}">
-        {row.Y} {column.X}
-      </div>
-      <!-- END column -->
-    <!--</div>-->
-    <!-- END row -->
+<h2 id="gameMessage">{L_message_player_local}</h2>
+<div id="pageBody">
+    <div id="gameField">
+    </div>
+
+  <div id="gameControls">
+    <!-- TODO - Убрать порнуху -->
+    <!-- DEFINE $COMPUTER_CE = '1' -->
+    <!-- DEFINE $COMPUTER_LE = '2' -->
+    <!-- DEFINE $COMPUTER_LG = '3' -->
+
+    <input type="radio" id="computerCE" value="{$COMPUTER_CE}" name="computerSkill" /> <label for="computerCE">{L_computerCE}</label><br />
+    <!--<label for="computerLE">{L_computerLE}</label> <input type="radio" id="computerLE" value="{$COMPUTER_LE}" name="computerSkill" /><br />-->
+    <input type="radio" id="computerLG" value="{$COMPUTER_LG}" name="computerSkill" /> <label for="computerLG">{L_computerLG}</label><br />
+
+    <label for="mark_o">{L_input_wanna_be_zero}</label> <input type="checkbox" id="mark_o" value="1" /><br />
+
+    <input type="button" id="game_reset" value="{L_game_reset}" /><br />
   </div>
 </div>
 
-<div style="display: inline-block;">
-<label for="mark_o">{L_input_wanna_be_zero}</label> <input type="checkbox" id="mark_o" value="1" /><br />
-<input type="button" id="game_reset" value="{L_game_reset}" /><br />
-
-<!-- TODO - Убрать порнуху -->
-<!-- DEFINE $COMPUTER_CE = '1' -->
-<!-- DEFINE $COMPUTER_LE = '2' -->
-<!-- DEFINE $COMPUTER_LG = '3' -->
-
-<label for="computerCE">{L_computerCE}</label> <input type="radio" id="computerCE" value="{$COMPUTER_CE}" name="computerSkill" /><br />
-<!--<label for="computerLE">{L_computerLE}</label> <input type="radio" id="computerLE" value="{$COMPUTER_LE}" name="computerSkill" /><br />-->
-<label for="computerLG">{L_computerLG}</label> <input type="radio" id="computerLG" value="{$COMPUTER_LG}" name="computerSkill" /><br />
-</div>
-
-<div>
-  Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a>
-  from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>
-  is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>
-</div>

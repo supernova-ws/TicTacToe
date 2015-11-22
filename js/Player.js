@@ -98,8 +98,6 @@ PlayerComputerCE.prototype.waitForMove = function() {
   var emptyCells = this._gameRound.board.getEmptyCells();
   var cellIndex = Math.randomInt(0, emptyCells.length - 1);
 
-//  sn_sound_play('other_moved');
-
   move = $.extend(emptyCells[cellIndex], {mark: this.mark});
 
   this._gameRound.makeMove(move);
@@ -122,8 +120,6 @@ PlayerComputerLG.prototype.waitForMove = function() {
   var emptyCells = this._gameRound.board.getEmptyCells();
 
   move = $.extend(emptyCells[0], {mark: this.mark});
-
-//  sn_sound_play('other_moved');
 
   this._gameRound.makeMove(move);
 };

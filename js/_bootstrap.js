@@ -36,14 +36,14 @@ var round;
 $(document).on('change', '#mark_o, input[name=computerSkill]', function(){
   round.changeSide();
 });
+$(document).on('click', '#game_reset', function(){
+  round.changeSide();
+});
 
 $(document).on('click', '.cell', function() {
   round.playerLocal.checkMove($(this));
 });
 
-$(document).on('click', '#game_reset', function(){
-  round.resetField();
-});
 
 $(document).ready(function() {
   round = new TicTacToe();
